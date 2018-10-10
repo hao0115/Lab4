@@ -1,0 +1,95 @@
+---
+title: "My answers for Assignment 4"
+author: "Hao Zeng"
+date: "Oct 7,2018"
+output:
+  html_document:
+    df_print: paged
+  includes: toc:yes number_sections:yes keep_tex:yes latex_engine:xelatex
+  pdf_document: null
+header-includes:
+- \usepackage{graphicx}
+- \usepackage{folat}
+---
+
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+##Recreate the graph from the Lecture 8 notes
+```{r}
+x1 <- seq(-3,3,by = 0.01)
+y1 <- dnorm(x1)
+pdf1 <- data.frame(x1,y1)
+
+x2 <- seq(0,6,by = 0.01)
+y2 <- dnorm(x2,mean = 3.2)
+pdf2 <- data.frame(x2,y2)
+
+x_category <- c(rep('x1',length(x1)),rep('x2',length(x2)))
+pdf <- data.frame(x_category,x = c(x1,x2),y = c(y1,y2))
+
+
+ggplot(data = pdf, aes(x = x, y = y, group = x_category,color = x_category))+
+  geom_line(lwd = 1,show.legend = FALSE)+
+  geom_vline(xintercept = qnorm(0.95),lty=2, lwd=1)+
+  scale_color_manual(values = c('blue','red'))+
+  geom_ribbon(data = filter(pdf,(pdf$x_category=='x1'& x>=qnorm(0.95)|(pdf$x_category=='x2'& x<=qnorm(0.95)))),aes(x,ymax = y,ymin=0,fill = x_category),alpha=0.5,col = 'black')+
+  scale_fill_manual(values = c('blue','red'),labels = c("Type I error", "Type II error"))+
+  scale_x_continuous(breaks = c(0,3.2),labels = c(expression(theta[0]),expression(theta[a])))+
+  annotate("text",x=2,y=0.02,label = expression(alpha), col = "white",size = 5)+
+  annotate("text",x=1,y=0.02,label = expression(beta),size = 5)+
+  labs(x="",y="")+
+  theme_bw()+
+  theme(panel.background = element_rect(fill = 'white'),
+        panel.grid = element_blank(),
+        legend.background=element_rect(colour='black'),
+        legend.title = element_blank(), 
+        legend.position = c(0,1),
+        legend.justification = c(0,1),
+        legend.text=element_text(size=15),
+        axis.text.x = element_text(face = 'bold',size = 15,vjust = -0.5),
+        axis.text.y = element_text(face = 'bold',size = 15,angle = 90,hjust = 0.5,vjust = 4),
+        axis.ticks.length = unit(.3,"cm")
+        )
+  
+  
+
+  
+  
+  
+  
+```
+
+
+
+
+## Implement a function that will check if a given positive integer is a prime number.
+```{r}
+if_prime <- function(x){
+  x = as.integer(x)
+  if(x == 1){
+    return(NA)
+  }
+  if(x ==2){
+    return(paste(x,"is a prime number."))
+  }
+  if(x >= 3){
+    for (y in 2:(x-1)) {
+    if(x%%y == 0){
+      return(paste(x,'is not a prime number.'))
+    } 
+    }
+      return(paste(x,"is a prime number"))
+  }
+  }
+
+if_prime(3)
+if_prime(5)
+if_prime(21)
+if_prime(71)
+if_prime(99)
+```
+
